@@ -11,6 +11,7 @@ loans = pd.read_csv("data/kiva_loans.csv")
 # loans = loans.loc[:, ["id", "loan_amount", "activity", "sector", "use",
 #                      "country_code", "tags", "borrower_genders"]]
 uses = loans.loc[:, "use"].dropna()
+tags = loans.loc[:, "tags"].dropna()
 
 # text processing stuff 
 punc_regex = re.compile("[{}]".format(re.escape(string.punctuation)))
@@ -21,7 +22,7 @@ min_threshold = 2
 
 # progress tracking
 processed = 0
-total = len(uses.index)
+total = len(uses.index) + len(tags.index)
 update_interval = total // 20
 
 def build_vocab(text):
@@ -45,6 +46,7 @@ def print_progress(processed, total):
 
 def main(argv):
     uses.apply(build_vocab)
+    tags.apply(build_vocab)
 
     global vocab
     for k, v in list(vocab.items()):
