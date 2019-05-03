@@ -1,15 +1,11 @@
-import sys, re, string
+import sys, re, string, pickle
 import numpy as np
 import pandas as pd
-import pickle
 from nltk.corpus import stopwords
 from collections import Counter
 
 # data
 loans = pd.read_csv("data/kiva_loans.csv")
-# columns that are prior knowledge
-# loans = loans.loc[:, ["id", "loan_amount", "activity", "sector", "use",
-#                      "country_code", "tags", "borrower_genders"]]
 uses = loans.loc[:, "use"].dropna()
 tags = loans.loc[:, "tags"].dropna()
 
