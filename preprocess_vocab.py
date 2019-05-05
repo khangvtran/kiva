@@ -24,7 +24,7 @@ update_interval = total // 20
 
 def print_progress(processed, total):
     if processed % update_interval == 0:
-        sys.stdout.write("Processed {} rows out of {} ({:.0f}%).\r".format(processed, total, processed / total * 100))
+        sys.stdout.write("Processed {} rows out of {} ({:.0f}%)\r".format(processed, total, processed / total * 100))
         sys.stdout.flush()
 
 def build_vocab(text):
