@@ -5,10 +5,15 @@ from sklearn.model_selection import train_test_split
 print("Loading data...")
 loans = pd.read_csv('data/kiva_loans.csv')
 
-# columns that are prior knowledge
+# take columns that are prior knowledge and drop NaNs
 prior_cols = ['id', 'loan_amount', 'activity', 'sector', 'use',
               'country_code', 'tags', 'borrower_genders']
-loans = loans.loc[:, prior_cols].dropna()
+loans = loans.loc[:, prior_cols]
+
+print("Size before dropping NAs: {}".format(len(loans.index)))
+loans = loans.dropna()
+print("Size after dropping NAs: {}".format(len(loans.index)))
+
 loan_amount = loans.loc[:, 'loan_amount']
 loans.drop('loan_amount', axis=1, inplace=True)
 

@@ -5,9 +5,10 @@ from collections import Counter
 from nltk.corpus import stopwords
 
 # data
-loans = pd.read_csv("data/kiva_loans.csv")
-uses = loans.loc[:, "use"].dropna()
-tags = loans.loc[:, "tags"].dropna()
+with open('X_train.p', 'rb') as X_train_pickle:
+    X_train = pickle.load(X_train_pickle)
+uses = X_train.loc[:, "use"]
+tags = X_train.loc[:, "tags"]
 
 # text processing stuff 
 punc_regex = re.compile("[{}]".format(re.escape(string.punctuation)))
