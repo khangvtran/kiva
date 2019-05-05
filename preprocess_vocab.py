@@ -1,15 +1,11 @@
-import sys, re, string
+import sys, pickle, re, string
 import numpy as np
 import pandas as pd
-import pickle
-from nltk.corpus import stopwords
 from collections import Counter
+from nltk.corpus import stopwords
 
 # data
 loans = pd.read_csv("data/kiva_loans.csv")
-# columns that are prior knowledge
-# loans = loans.loc[:, ["id", "loan_amount", "activity", "sector", "use",
-#                      "country_code", "tags", "borrower_genders"]]
 uses = loans.loc[:, "use"].dropna()
 tags = loans.loc[:, "tags"].dropna()
 
@@ -25,7 +21,15 @@ processed = 0
 total = len(uses.index) + len(tags.index)
 update_interval = total // 20
 
+def print_progress(processed, total):
+    if processed % update_interval == 0:
+        sys.stdout.write("Processed {} rows out of {} ({:.0f}%).\r".format(processed, total, processed / total * 100))
+        sys.stdout.flush()
+
 def build_vocab(text):
+    """Build vocabulary by removing puncutation and stopwords and
+    filtering for alphanumeric words of length > 1
+    """
     text = punc_regex.sub("", text)
     tokens = text.lower().split()
     tokens = [t for t in tokens if t.isalpha() and t not in stop_words and len(t) > 1]
@@ -38,11 +42,6 @@ def build_vocab(text):
     print_progress(processed, total)
 
     return tokens
-
-def print_progress(processed, total):
-    if processed % update_interval == 0:
-        sys.stdout.write("Processed {} rows out of {} ({:.0f}%).\r".format(processed, total, processed / total * 100))
-        sys.stdout.flush()
 
 def main(argv):
     uses.apply(build_vocab)

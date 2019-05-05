@@ -1,3 +1,9 @@
+# pickles (Python)
+X_train.p
+X_test.p
+y_train.p
+y_test.p
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
