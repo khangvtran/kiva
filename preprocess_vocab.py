@@ -45,8 +45,8 @@ def build_vocab(text):
     return tokens
 
 def main(argv):
-    uses.apply(build_vocab)
-    tags.apply(build_vocab)
+    uses.map(build_vocab)
+    tags.map(build_vocab)
 
     global vocab
     for k, v in list(vocab.items()):
