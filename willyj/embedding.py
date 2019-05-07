@@ -39,8 +39,8 @@ with open('pickles/y_test.pickle', 'rb') as y_test_pickle:
 
 # progress tracking
 processed = 0
-total = sum([len(t.index) for t in X_train_texts])
-update_interval = total // 20
+total = 0
+update_interval = 0
 
 def print_progress(processed, total):
     if processed % update_interval == 0:
@@ -72,11 +72,18 @@ def tokenize_list(texts):
         list of pandas series containing rows of text to encode
     """
     global processed
+    global total
+    global update_interval
     processed = 0
+    total = sum([len(t.index) for t in texts])
+    update_interval = total // 20
 
     tokens = texts[0].map(tokenize_text)
     for t in texts[1:]:
         tokens = tokens + " " + t.map(tokenize_text)
+
+    sys.stdout.write("\n")
+    sys.stdout.flush()
 
     return tokens
 
@@ -98,7 +105,7 @@ def generate_sequences(tokenizer, tokens, maxlen):
     sys.stdout.flush()
 
     # pad the sequences
-    sys.stdout.write("\nPadding sequences...")
+    sys.stdout.write("Padding sequences...")
     sys.stdout.flush()
 
     padded_sequences = pad_sequences(sequences, maxlen=maxlen, padding='post', truncating='post')
@@ -141,7 +148,7 @@ def main(argv):
     maxlen = train_tokens.map(len).max()
 
     # fit the tokenizer
-    sys.stdout.write("\nFitting tokenizer on tokens...")
+    sys.stdout.write("Fitting tokenizer on tokens...")
     sys.stdout.flush()
 
     tokenizer = Tokenizer()
@@ -158,7 +165,7 @@ def main(argv):
     test_sequences = generate_sequences(tokenizer, test_tokens, maxlen)
 
     vocab_size = len(tokenizer.word_index) + 1
-    train_nn(train_sequences, test_sequences, y_train, y_test, vocab_size)
+    train_nn(train_sequences, test_sequences, y_train, y_test, vocab_size, maxlen)
 
 if __name__ == "__main__":
     main(sys.argv)
