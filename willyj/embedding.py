@@ -123,13 +123,14 @@ def train_nn(X_train, X_test, y_train, y_test, vocab_size, maxlen):
     model.add(MaxPooling1D(pool_size=2))
     model.add(Flatten())
     model.add(Dense(10, activation='relu'))
+    model.add(Dense(1, activation='relu'))
  
     # compile network
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 
     # fit network
     print("Fitting model...")
-    model.fit(X_train, y_train, epochs=10, verbose=2)
+    model.fit(X_train, y_train, epochs=10, verbose=1)
 
     # evaluate
     print("Evaluating model...")
