@@ -47,7 +47,7 @@ def print_progress(processed, total):
         sys.stdout.write("Processed {} rows out of {} ({:.0f}%)\r".format(processed, total, processed / total * 100))
         sys.stdout.flush()
 
-def tokenize(text)
+def tokenize_text(text):
     """Clean text string by transforming into a space-separated string
     of words in vocab
     """
@@ -62,9 +62,8 @@ def tokenize(text)
 
     return tokens
 
-def fit_tokenizer(texts):
-    """Return a tokenizer model fitted to the texts in the input list,
-    as well as the converted encodings. The texts in each input series
+def tokenize_list(texts):
+    """Tokenize each series in the input list. The texts in each input series
     will be concatenated together separated by spaces.
 
     Parameters
@@ -72,54 +71,47 @@ def fit_tokenizer(texts):
     texts: list
         list of pandas series containing rows of text to encode
     """
-    # tokenize the stuff
-    sys.stdout.write("\nTokenizing text data...")
-    sys.stdout.flush()
-
     global processed
     processed = 0
 
-    tokens = texts[0].map(tokenize)
+    tokens = texts[0].map(tokenize_text)
     for t in texts[1:]:
-        tokens = tokens + " " + t.map(tokenize)
+        tokens = tokens + " " + t.map(tokenize_text)
 
-    # fit the tokenizer
-    sys.stdout.write("\nFitting tokenizer on all tokens...")
-    sys.stdout.flush()
+    return tokens
 
-    tokenizer = Tokenizer()
-    tokenizer.fit_on_texts(tokens)
+def generate_sequences(tokenizer, tokens, maxlen):
+    """Return sequences encoded by the tokenizer.
 
-    sys.stdout.write(" Done\n")
-    sys.stdout.flush()
-
-    # find max length token string for padding
-    maxlen = tokens.map(len).max()
-
+    Parameters
+    ----------
+    tokens: Series
+        pandas series containing text tokens to convert
+    """
     # convert tokens to encoded sequences
-    sys.stdout.write("\nConverting tokens to numerical sequences...")
+    sys.stdout.write("Converting tokens to numerical sequences...")
     sys.stdout.flush()
 
-    sequences = tokenizer.text_to_sequences(tokens)
+    sequences = tokenizer.texts_to_sequences(tokens)
 
     sys.stdout.write(" Done\n")
     sys.stdout.flush()
 
     # pad the sequences
-    sys.stdout.write("\nConverting tokens to numerical sequences...")
+    sys.stdout.write("\nPadding sequences...")
     sys.stdout.flush()
 
-    padded_sequences = pad_sequences(sequences, maxlen=maxlen, padding='post')
+    padded_sequences = pad_sequences(sequences, maxlen=maxlen, padding='post', truncating='post')
 
     sys.stdout.write(" Done\n")
     sys.stdout.flush()
 
-    return tokenizer, padded_sequences
+    return padded_sequences
 
-def train_nn(X_train, X_test, y_train, y_test):
+def train_nn(X_train, X_test, y_train, y_test, vocab_size, maxlen):
     print("Building network...")
     model = Sequential()
-    model.add(Embedding(vocab_size, 100, input_length=max_length))
+    model.add(Embedding(vocab_size, 100, input_length=maxlen))
     model.add(Conv1D(filters=32, kernel_size=8, activation='relu'))
     model.add(MaxPooling1D(pool_size=2))
     model.add(Flatten())
@@ -138,9 +130,35 @@ def train_nn(X_train, X_test, y_train, y_test):
     print("Test Accuracy: {}".format(acc * 100)) 
 
 def main(argv):
-    train_tokenizer, train_sequences = fit_tokenizer(X_train_texts)
-    test_tokenizer, test_sequences = fit_tokenizer(X_test_texts)
-    train_nn(train_sequences, test_sequences, y_train, y_test)
+    # tokenize the text
+    print("Tokenizing training data...")
+    train_tokens = tokenize_list(X_train_texts)
+
+    print("Tokenizing testing data...")
+    test_tokens = tokenize_list(X_test_texts)
+
+    # find max length token string for padding
+    maxlen = train_tokens.map(len).max()
+
+    # fit the tokenizer
+    sys.stdout.write("\nFitting tokenizer on tokens...")
+    sys.stdout.flush()
+
+    tokenizer = Tokenizer()
+    tokenizer.fit_on_texts(train_tokens)
+
+    sys.stdout.write(" Done\n")
+    sys.stdout.flush()
+
+    # generate sequences for neural net input
+    print("Generating training sequences...")
+    train_sequences = generate_sequences(tokenizer, train_tokens, maxlen)
+
+    print("Generating testing sequences...")
+    test_sequences = generate_sequences(tokenizer, test_tokens, maxlen)
+
+    vocab_size = len(tokenizer.word_index) + 1
+    train_nn(train_sequences, test_sequences, y_train, y_test, vocab_size)
 
 if __name__ == "__main__":
     main(sys.argv)
