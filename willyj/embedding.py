@@ -134,7 +134,7 @@ def train_nn(X_train, X_test, y_train, y_test, vocab_size, maxlen):
 
     # evaluate
     print("Evaluating model...")
-    loss, acc = model.evaluate(X_test, y_test, verbose=0)
+    loss, acc = model.evaluate(X_test, y_test, verbose=1)
     print("Test Accuracy: {}".format(acc * 100)) 
 
 def main(argv):
