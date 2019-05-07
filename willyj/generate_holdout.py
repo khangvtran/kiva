@@ -3,7 +3,7 @@ import pickle
 from sklearn.model_selection import train_test_split
 
 print("Loading data...")
-loans = pd.read_csv('data/kiva_loans.csv')
+loans = pd.read_csv('../data/kiva_loans.csv')
 
 # take columns that are prior knowledge and drop NaNs
 prior_cols = ['id', 'loan_amount', 'activity', 'sector', 'use',

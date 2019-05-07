@@ -1,6 +1,6 @@
 import pandas as pd
 
-loans = pd.read_csv("data/kiva_loans.csv")
+loans = pd.read_csv("../data/kiva_loans.csv")
 
 # columns that are prior knowledge
 # - use and tags are seemingly arbitrary so we use the word embeddings for those
