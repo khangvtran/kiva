@@ -10,9 +10,11 @@ prior_cols = ['id', 'loan_amount', 'activity', 'sector', 'use',
               'country_code', 'tags', 'borrower_genders']
 loans = loans.loc[:, prior_cols]
 
-print("Size before dropping NAs: {}".format(len(loans.index)))
+print("Size before dropping NAs and outliers: {}".format(len(loans.index)))
 loans = loans.dropna()
-print("Size after dropping NAs: {}".format(len(loans.index)))
+# drop outliers (further than 2 SDs away --- we still have 95% of the data!)
+loans = loans[((loans.loan_amount - loans.loan_amount.mean()) / loans.loan_amount.std()).abs() < 2]
+print("Size after dropping NAs and outliers: {}".format(len(loans.index)))
 
 loan_amount = loans.loc[:, 'loan_amount']
 loans.drop('loan_amount', axis=1, inplace=True)
