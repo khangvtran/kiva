@@ -37,6 +37,9 @@ with open('pickles/y_train.pickle', 'rb') as y_train_pickle:
 with open('pickles/y_test.pickle', 'rb') as y_test_pickle:
     y_test = pickle.load(y_test_pickle)
 
+y_train = y_train / 50
+y_test = y_test / 50
+
 # progress tracking
 processed = 0
 total = 0
@@ -123,10 +126,10 @@ def train_nn(X_train, X_test, y_train, y_test, vocab_size, maxlen):
     model.add(MaxPooling1D(pool_size=2))
     model.add(Flatten())
     model.add(Dense(10, activation='relu'))
-    model.add(Dense(1, activation='relu'))
+    model.add(Dense(1, activation='linear'))
  
     # compile network
-    model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
+    model.compile(loss='mean_squared_error', optimizer='adam')
 
     # fit network
     print("Fitting model...")
@@ -134,8 +137,8 @@ def train_nn(X_train, X_test, y_train, y_test, vocab_size, maxlen):
 
     # evaluate
     print("Evaluating model...")
-    loss, acc = model.evaluate(X_test, y_test, verbose=1)
-    print("Test Accuracy: {}".format(acc * 100)) 
+    loss = model.evaluate(X_test, y_test, verbose=1)
+    print("Test Loss: {}".format(loss * 100)) 
 
 def main(argv):
     # tokenize the text
