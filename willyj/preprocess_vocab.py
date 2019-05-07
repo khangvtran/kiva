@@ -5,7 +5,7 @@ from collections import Counter
 from nltk.corpus import stopwords
 
 # data
-with open('X_train.pickle', 'rb') as X_train_pickle:
+with open('pickles/X_train.pickle', 'rb') as X_train_pickle:
     X_train = pickle.load(X_train_pickle)
 uses = X_train.loc[:, "use"]
 tags = X_train.loc[:, "tags"]
@@ -53,10 +53,10 @@ def main(argv):
         if v < min_threshold:
             del vocab[k]
 
-    with open("vocab.pickle", 'wb') as vocab_pickle:
+    with open("pickles/vocab.pickle", 'wb') as vocab_pickle:
         pickle.dump(vocab, vocab_pickle)
 
-    sys.stdout.write("\nWrote vocab counter to vocab.pickle\n")
+    sys.stdout.write("\nWrote vocab counter to pickles/vocab.pickle\n")
 
 if __name__ == "__main__":
     main(sys.argv)

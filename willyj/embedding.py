@@ -15,26 +15,26 @@ from keras.layers.convolutional import MaxPooling1D
 punc_regex = re.compile("[{}]".format(re.escape(string.punctuation)))
 
 # load the data
-with open('vocab.pickle', 'rb') as vocab_pickle:
+with open('pickles/vocab.pickle', 'rb') as vocab_pickle:
     vocab = pickle.load(vocab_pickle)
 vocab_set = set(vocab.keys())
 
-with open('X_train.pickle', 'rb') as X_train_pickle:
+with open('pickles/X_train.pickle', 'rb') as X_train_pickle:
     X_train = pickle.load(X_train_pickle)
 uses_train = X_train.loc[:, "use"]
 tags_train = X_train.loc[:, "tags"]
 X_train_texts = [uses_train, tags_train]
 
-with open('X_test.pickle', 'rb') as X_test_pickle:
+with open('pickles/X_test.pickle', 'rb') as X_test_pickle:
     X_test = pickle.load(X_test_pickle)
 uses_test = X_test.loc[:, "use"]
 tags_test = X_test.loc[:, "tags"]
 X_test_texts = [uses_test, tags_test]
 
-with open('y_train.pickle', 'rb') as y_train_pickle:
+with open('pickles/y_train.pickle', 'rb') as y_train_pickle:
     y_train = pickle.load(y_train_pickle)
 
-with open('y_test.pickle', 'rb') as y_test_pickle:
+with open('pickles/y_test.pickle', 'rb') as y_test_pickle:
     y_test = pickle.load(y_test_pickle)
 
 # progress tracking
