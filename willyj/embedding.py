@@ -117,6 +117,7 @@ def fit_tokenizer(texts):
     return tokenizer, padded_sequences
 
 def train_nn(X_train, X_test, y_train, y_test):
+    print("Building network...")
     model = Sequential()
     model.add(Embedding(vocab_size, 100, input_length=max_length))
     model.add(Conv1D(filters=32, kernel_size=8, activation='relu'))
@@ -128,11 +129,13 @@ def train_nn(X_train, X_test, y_train, y_test):
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
     # fit network
+    print("Fitting model...")
     model.fit(X_train, y_train, epochs=10, verbose=2)
 
     # evaluate
+    print("Evaluating model...")
     loss, acc = model.evaluate(X_test, y_test, verbose=0)
-    print('Test Accuracy: {}'.format(acc * 100)) 
+    print("Test Accuracy: {}".format(acc * 100)) 
 
 def main(argv):
     train_tokenizer, train_sequences = fit_tokenizer(X_train_texts)
